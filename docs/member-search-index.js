@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"it.phibonachos.ponos","c":"AbstractEvaluator","l":"AbstractEvaluator(Target)","url":"%3Cinit%3E(Target)"},{"p":"it.phibonachos.utils","c":"FunctionalWrapper","l":"accept(I)"},{"p":"it.phibonachos.ponos","c":"AbstractEvaluator","l":"validate()"}]

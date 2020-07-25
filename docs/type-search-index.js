@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"it.phibonachos.ponos","l":"AbstractEvaluator"},{"l":"All Classes","url":"allclasses-index.html"},{"p":"it.phibonachos.utils","l":"FunctionalWrapper"}]
