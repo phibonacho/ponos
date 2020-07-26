@@ -24,7 +24,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
                 .filter(m -> m.getParameterCount() == 0)
                 .filter(this::customFilter)
                 .sorted(Comparator.comparing(sortPredicate()))
-                .map(validateAlgorithm());
+                .map(evaluateAlgorithm());
     }
 
     /**
@@ -49,7 +49,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     /**
      * @return Conversion function from property type to Control type
      */
-    protected abstract Function<Method, Control> validateAlgorithm();
+    protected abstract Function<Method, Control> evaluateAlgorithm();
 
     /**
      * @param m A property getter to filter
