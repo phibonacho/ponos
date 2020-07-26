@@ -46,4 +46,11 @@
             </plugin>
         </plugins>
     </reporting>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub rollingflamingo Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/rollingflamingo/ponos</url>
+        </repository>
+    </distributionManagement>
 </project>
