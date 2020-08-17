@@ -1,5 +1,7 @@
 package it.phibonachos.ponos;
 
+import it.phibonachos.ponos.converters.Converter;
+import it.phibonachos.ponos.converters.SingleValueConverter;
 import it.phibonachos.utils.FunctionalWrapper;
 
 import java.lang.annotation.Annotation;
@@ -35,6 +37,10 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
         return evaluate(validateStream());
     }
 
+    protected Class<? extends Converter<Control>> fetchConverter(A annotation) throws Exception {
+        throw new RuntimeException("fetchConverter is not implemented");
+    }
+
     /**
      * @param s Stream of properties already converted to Control type
      * @return the evaluation based on properties concatenation
@@ -50,6 +56,24 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @return Conversion function from property type to Control type
      */
     protected abstract Function<Method, Control> evaluateAlgorithm();
+
+    /**
+     * <p>Validate method with a generic validate interface<p/>
+     * @param a annotation that must expose a method to retrieve a {@link Converter}
+     * @param methods, method to validate
+     * @return true if method return a valid value
+     * @throws Exception if not valid
+     */
+    protected Control evaluateMethod(A a, Method ...methods) throws Exception {
+        Converter<Control> validator = Converter.create(fetchConverter(a));
+
+        if(validator instanceof SingleValueConverter)
+            return validator.evaluate(this.t, methods[0]);
+
+        return validator.evaluate(this.t, methods);
+    }
+
+
 
     /**
      * @param m A property getter to filter
