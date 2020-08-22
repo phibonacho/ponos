@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * Defines a {@link Converter} which elaborate boolean verdicts, it can be used to validate a single or multiple properties.
+ * Defines a {@link Converter} which elaborate parametric verdicts, it can be used to convert a single or multiple properties.
  */
 public abstract class MultiValueConverter<T> implements Converter<T> {
 
@@ -40,6 +40,6 @@ public abstract class MultiValueConverter<T> implements Converter<T> {
      * @return the string specifying why the validation failed.
      */
     public String message() {
-        return "fails constraint defined in " + this.getClass().getSimpleName();
+        return "fails conversion defined in " + this.getClass().getSimpleName();
     }
 }
