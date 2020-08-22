@@ -8,7 +8,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.InvalidPropertiesFormatException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -23,7 +22,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
 
     private Stream<Control> validateStream() {
         return Arrays.stream(this.t.getClass().getDeclaredMethods())
-                .filter(m -> m.getAnnotation(annotationClass)!=null)
+                .filter(m -> getMainAnnotation(m)!=null)
                 .filter(m -> m.getParameterCount() == 0)
                 .filter(this::customFilter)
                 .sorted(Comparator.comparing(sortPredicate()))
@@ -39,7 +38,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     }
 
     protected Class<? extends Converter<Control>> fetchConverter(A annotation) throws Exception {
-        throw new RuntimeException("fetchConverter is not implemented");
+        throw new RuntimeException("fetchConverter is not implemented: provide a method in your custom annotation to retrieve a conversion class.");
     }
 
     /**
