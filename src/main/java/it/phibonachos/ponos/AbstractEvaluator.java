@@ -8,6 +8,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.InvalidPropertiesFormatException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -84,6 +85,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     }
 
     /**
+     * <p>Handy way to provide a fallback in functional java</p>
      * <p>Invoke method against a class and uses fallback in case of null property</p>
      * @param throwingFunction wraps method invocation
      * @param fallback invoked when throwingFunction results null
@@ -91,12 +93,32 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @return result of the invocation in throwingFunction or value provided from fallback function
      * @throws E on evaluation failure
      */
-    protected abstract  <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Function<Method, R> fallback) throws E;
+    protected  <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Function<Method, R> fallback) throws E {
+        return i -> {
+            try {
+                return throwingFunction.accept(i);
+            } catch (NullPointerException npe) {
+                return fallback.apply(i);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
 
     /**
      * Same as {@link #invokeOnNull(FunctionalWrapper, Function)} but takes a supplier instead of a function (no params needed)
      * */
-    protected abstract  <R>Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Supplier<R> fallback) throws E;
+    protected  <R>Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Supplier<R> fallback) throws E {
+        return i -> {
+            try {
+                return throwingFunction.accept(i);
+            } catch (NullPointerException npe) {
+                return fallback.get();
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        };
+    }
 
 
     /**
@@ -105,7 +127,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @return the method of the given class
      * @throws RuntimeException if method is not found or other exceptions are catch
      */
-    @Deprecated
+    @Deprecated(since = "v0.1.1", forRemoval = true)
     protected Function<? super String, Method> fetchMethod(FunctionalWrapper<String, Method, NoSuchMethodException> throwingFunction) throws RuntimeException{
         return i -> {
             try {
