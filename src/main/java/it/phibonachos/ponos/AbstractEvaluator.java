@@ -34,7 +34,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * <p>Expose {@link #evaluate(Stream)} preventing final user from manipulating directly validation stream</p>
      * @return the result of the evaluation operated over target properties
      */
-    public Control validate(){
+    public Control evaluate(){
         return evaluate(validateStream());
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @return result of the invocation in throwingFunction or value provided from fallback function
      * @throws E on evaluation failure
      */
-    protected  <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Function<Method, R> fallback) throws E {
+    protected  <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Function<Method, R> fallback) {
         return i -> {
             try {
                 return throwingFunction.accept(i);
@@ -108,7 +108,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     /**
      * Same as {@link #invokeOnNull(FunctionalWrapper, Function)} but takes a supplier instead of a function (no params needed)
      * */
-    protected  <R>Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Supplier<R> fallback) throws E {
+    protected  <R>Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Supplier<R> fallback) {
         return i -> {
             try {
                 return throwingFunction.accept(i);

@@ -6,7 +6,7 @@
 
     <groupId>it.phibonachos</groupId>
     <artifactId>ponos</artifactId>
-    <version>0.2.1</version>
+    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
