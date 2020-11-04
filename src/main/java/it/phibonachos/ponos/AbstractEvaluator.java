@@ -25,7 +25,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
                 .filter(m -> getMainAnnotation(m)!=null)
                 .filter(m -> m.getParameterCount() == 0)
                 .filter(this::customFilter)
-                .sorted(Comparator.comparing(sortPredicate()))
+                .sorted(sortPredicate())
                 .map(evaluateAlgorithm());
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     /**
      * @return a function for sorting properties in validation stream
      */
-    protected abstract Function<Method, Boolean> sortPredicate();
+    protected abstract Comparator<Method> sortPredicate();
 
     /**
      * @return Conversion function from property type to Control type
