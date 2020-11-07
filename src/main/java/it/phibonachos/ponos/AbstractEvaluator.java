@@ -49,19 +49,11 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     protected abstract Control evaluate(Stream<Control> s);
 
     /**
-     * <p>This API si deprecated, we encourage developer to override {@link #comparingPredicate()} instead</p>
+     * <p>Defines a procedure to sort properties to validate.</p>
      *
-     * @return a function for sorting properties in validation stream
-     */
-    @Deprecated(since = "v1.0.2-SNAPSHOT", forRemoval = true)
-    protected abstract Function<Method, Boolean> sortPredicate();
-
-    /**
      * @return a comparator for sorting properties in validation stream
      */
-    protected Comparator<Method> comparingPredicate() {
-        return Comparator.comparing(sortPredicate());
-    }
+    public abstract Comparator<Method> comparingPredicate();
 
     /**
      * @return Conversion function from property type to Control type
