@@ -16,24 +16,25 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     protected Target t;
     protected Class<A> annotationClass;
 
-    public AbstractEvaluator(Target t){
+    public AbstractEvaluator(Target t) {
         this.t = t;
     }
 
     private Stream<Control> validateStream() {
         return Arrays.stream(this.t.getClass().getDeclaredMethods())
-                .filter(m -> getMainAnnotation(m)!=null)
+                .filter(m -> getMainAnnotation(m) != null)
                 .filter(m -> m.getParameterCount() == 0)
                 .filter(this::customFilter)
-                .sorted(Comparator.comparing(sortPredicate()))
+                .sorted(comparingPredicate())
                 .map(evaluateAlgorithm());
     }
 
     /**
      * <p>Expose {@link #evaluate(Stream)} preventing final user from manipulating directly validation stream</p>
+     *
      * @return the result of the evaluation operated over target properties
      */
-    public Control evaluate(){
+    public Control evaluate() {
         return evaluate(validateStream());
     }
 
@@ -48,9 +49,19 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     protected abstract Control evaluate(Stream<Control> s);
 
     /**
+     * <p>This API si deprecated, we encourage developer to override {@link #comparingPredicate()} instead</p>
+     *
      * @return a function for sorting properties in validation stream
      */
+    @Deprecated(since = "v1.0.2-SNAPSHOT", forRemoval = true)
     protected abstract Function<Method, Boolean> sortPredicate();
+
+    /**
+     * @return a comparator for sorting properties in validation stream
+     */
+    protected Comparator<Method> comparingPredicate() {
+        return Comparator.comparing(sortPredicate());
+    }
 
     /**
      * @return Conversion function from property type to Control type
@@ -58,21 +69,21 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     protected abstract Function<Method, Control> evaluateAlgorithm();
 
     /**
-     * <p>Validate method with a generic validate interface<p/>
-     * @param a annotation that must expose a method to retrieve a {@link Converter}
+     * <p>Validate method with a generic validate interface</p>
+     *
+     * @param a        annotation that must expose a method to retrieve a {@link Converter}
      * @param methods, method to validate
      * @return true if method return a valid value
      * @throws Exception if not valid
      */
-    protected Control evaluateMethod(A a, Method ...methods) throws Exception {
+    protected Control evaluateMethod(A a, Method... methods) throws Exception {
         Converter<Control> validator = Converter.create(fetchConverter(a));
 
-        if(validator instanceof SingleValueConverter)
+        if (validator instanceof SingleValueConverter)
             return validator.evaluate(this.t, methods[0]);
 
         return validator.evaluate(this.t, methods);
     }
-
 
 
     /**
@@ -86,13 +97,14 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
     /**
      * <p>Handy way to provide a fallback in functional java</p>
      * <p>Invoke method against a class and uses fallback in case of null property</p>
+     *
      * @param throwingFunction wraps method invocation
-     * @param fallback invoked when throwingFunction results null
-     * @param <R> parametric return type
+     * @param fallback         invoked when throwingFunction results null
+     * @param <R>              parametric return type
      * @return result of the invocation in throwingFunction or value provided from fallback function
      * @throws E on evaluation failure
      */
-    protected  <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Function<Method, R> fallback) {
+    protected <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Function<Method, R> fallback) {
         return i -> {
             try {
                 return throwingFunction.accept(i);
@@ -106,8 +118,8 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
 
     /**
      * Same as {@link #invokeOnNull(FunctionalWrapper, Function)} but takes a supplier instead of a function (no params needed)
-     * */
-    protected  <R>Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Supplier<R> fallback) {
+     */
+    protected <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Supplier<R> fallback) {
         return i -> {
             try {
                 return throwingFunction.accept(i);
@@ -122,12 +134,13 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
 
     /**
      * <p>Return getter method starting from property name</p>
+     *
      * @param throwingFunction algorithm to retrieve a getMethod using its name
      * @return the method of the given class
      * @throws RuntimeException if method is not found or other exceptions are catch
      */
     @Deprecated(since = "v0.1.1", forRemoval = true)
-    protected Function<? super String, Method> fetchMethod(FunctionalWrapper<String, Method, NoSuchMethodException> throwingFunction) throws RuntimeException{
+    protected Function<? super String, Method> fetchMethod(FunctionalWrapper<String, Method, NoSuchMethodException> throwingFunction) throws RuntimeException {
         return i -> {
             try {
                 return throwingFunction.accept(i);
