@@ -69,14 +69,10 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @throws Exception if not valid
      */
     protected Control evaluateMethod(A a, Method... methods) throws Exception {
-        Converter<Control> validator = Converter.create(fetchConverter(a));
-
-        if (validator instanceof SingleValueConverter)
-            return validator.evaluate(this.t, methods[0]);
-
-        return validator.evaluate(this.t, methods);
+        return Converter
+                .create(fetchConverter(a))
+                .evaluate(fetchValues(this.t, methods));
     }
-
 
     /**
      * @param m A property getter to filter
@@ -150,5 +146,11 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      */
     protected A getMainAnnotation(Method m) {
         return m.getAnnotation(annotationClass);
+    }
+
+    protected Object[] fetchValues(Target target, Method ...getters) {
+        return Arrays.stream(getters)
+                .map(FunctionalWrapper.tryCatch(m -> m.invoke(target), m -> null))
+                .toArray();
     }
 }
