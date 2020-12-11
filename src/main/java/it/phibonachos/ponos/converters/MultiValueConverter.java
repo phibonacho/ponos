@@ -1,8 +1,5 @@
 package it.phibonachos.ponos.converters;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 /**
  * Defines a {@link Converter} which elaborate parametric verdicts, it can be used to convert a single or multiple properties.
  */
@@ -10,18 +7,12 @@ public abstract class MultiValueConverter<T> implements Converter<T> {
 
     /**
      * Evaluate method collect all the properties needed by the validation class and retrieves them values in order to emit a verdict.
-     * @param props properties bounded to validation class (1-n)
-     * @return true if all clauses are met.
-     * @throws Exception if at least one clause is not met or validate algorithm emit a negative verdict.
+     * @param props properties to convert (1-n)
+     * @return the result of conversion.
+     * @throws Exception if conversion fails.
      */
     @Override
     public T evaluate(Object... props) throws Exception {
-        if(Objects.isNull(props[0]))
-            throw new NullPointerException();
-
-        if(Arrays.stream(props).allMatch(Objects::isNull))
-            throw new RuntimeException("All bounded properties are not instantiated");
-
         return convertAll(props);
     }
 
