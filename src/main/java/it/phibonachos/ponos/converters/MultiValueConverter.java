@@ -14,7 +14,7 @@ public abstract class MultiValueConverter<T> implements Converter<T> {
     @Override
     public T evaluate(Object... props) throws Exception {
         if(props.length != arity())
-            throw new IllegalArgumentException(String.format("%s: arity not respected: %s required over %s passed", this.getClass().getSimpleName(), arity(), props.length));
+            throw new IllegalArgumentException(String.format("arity not respected: %s required over %s passed (%s)", arity(), props.length, this.getClass().getCanonicalName()));
         return convertAll(props);
     }
 
