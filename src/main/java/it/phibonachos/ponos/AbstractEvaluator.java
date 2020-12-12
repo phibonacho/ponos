@@ -1,7 +1,6 @@
 package it.phibonachos.ponos;
 
 import it.phibonachos.ponos.converters.Converter;
-import it.phibonachos.ponos.converters.SingleValueConverter;
 import it.phibonachos.utils.FunctionalWrapper;
 
 import java.lang.annotation.Annotation;
@@ -38,9 +37,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
         return evaluate(validateStream());
     }
 
-    protected Class<? extends Converter<Control>> fetchConverter(A annotation) throws Exception {
-        throw new RuntimeException("fetchConverter is not implemented: provide a method in your custom annotation to retrieve a conversion class.");
-    }
+    public abstract Class<? extends Converter<Control>> fetchConverter(A annotation) throws Exception;
 
     /**
      * @param s Stream of properties already converted to Control type
@@ -59,20 +56,6 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @return Conversion function from property type to Control type
      */
     protected abstract Function<Method, Control> evaluateAlgorithm();
-
-    /**
-     * <p>Validate method with a generic validate interface</p>
-     *
-     * @param a        annotation that must expose a method to retrieve a {@link Converter}
-     * @param methods, method to validate
-     * @return true if method return a valid value
-     * @throws Exception if not valid
-     */
-    protected Control evaluateMethod(A a, Method... methods) throws Exception {
-        return Converter
-                .create(fetchConverter(a))
-                .evaluate(fetchValues(this.t, methods));
-    }
 
     /**
      * @param m A property getter to filter
@@ -113,27 +96,6 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
                 return throwingFunction.accept(i);
             } catch (NullPointerException npe) {
                 return fallback.get();
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage());
-            }
-        };
-    }
-
-
-    /**
-     * <p>Return getter method starting from property name</p>
-     *
-     * @param throwingFunction algorithm to retrieve a getMethod using its name
-     * @return the method of the given class
-     * @throws RuntimeException if method is not found or other exceptions are catch
-     */
-    @Deprecated(since = "v0.1.1", forRemoval = true)
-    protected Function<? super String, Method> fetchMethod(FunctionalWrapper<String, Method, NoSuchMethodException> throwingFunction) throws RuntimeException {
-        return i -> {
-            try {
-                return throwingFunction.accept(i);
-            } catch (NoSuchMethodException nsme) {
-                throw new RuntimeException("cannot find method: " + nsme.getMessage());
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
