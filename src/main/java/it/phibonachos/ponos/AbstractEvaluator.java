@@ -133,7 +133,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
         return result.toArray();
     }
 
-    private Object fetchValue(String propName) {
+    protected Object fetchValue(String propName) {
         try {
             return fetchValue(new PropertyDescriptor(propName, this.t.getClass()).getReadMethod());
         } catch (IntrospectionException e) {
@@ -141,7 +141,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
         }
     }
 
-    private Object fetchValue(Method getter) {
+    protected Object fetchValue(Method getter) {
         try {
             Object aux = getter.invoke(this.t);
             cache.put(getter.getName(), aux);
