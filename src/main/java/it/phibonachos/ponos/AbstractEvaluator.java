@@ -110,7 +110,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @return the evaluation of the property
      * @throws Exception if evaluation fails
      */
-    protected Control process(A annotation, Converter<Control> converter, Object property) throws Exception {
+    protected Control process(A annotation, Converter<Control> converter, Object property, Method method) throws Exception {
         return converter.evaluate(property);
     }
 
@@ -161,7 +161,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
         Converter<Control> converter = Converter.create(fetchConverter(annotation));
         Object property = fetchValue(target);
 
-        return process(annotation, converter, property);
+        return process(annotation, converter, property, target);
     }
 
     private Control processAll() {
