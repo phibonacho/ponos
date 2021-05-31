@@ -27,7 +27,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      *
      * @return the result of the evaluation operated over target properties
      */
-    public Control evaluate() {
+    public Control evaluate() throws Exception {
         return processAll();
     }
 
@@ -124,8 +124,8 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
             if(!cache.containsKey(property))
                 try {
                     result.add(fetchValue(property));
-                } catch (Exception e) {
-                    cache.put(property, null);
+                } catch (Exception ignored) {
+                    // mmmh
                 }
             else
                 result.add(cache.get(property));
@@ -153,7 +153,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
 
     /**
      * @param target the property getter being evaluated
-     * @return the result of {@link #process(Annotation, Converter, Object)}
+     * @return the result of {@link #process(Annotation, Converter, Object, Method)}
      * @throws Exception if converter class cannot be instantiated
      */
     private Control prepare(Method target) throws Exception {
@@ -164,7 +164,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
         return process(annotation, converter, property, target);
     }
 
-    private Control processAll() {
+    private Control processAll() throws Exception {
         return Arrays.stream(this.t.getClass().getDeclaredMethods())
                 .filter(m -> getMainAnnotation(m) != null)
                 .filter(m -> m.getParameterCount() == 0)
