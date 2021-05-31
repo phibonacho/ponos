@@ -1,6 +1,7 @@
 package it.phibonachos.ponos;
 
 import it.phibonachos.ponos.converters.Converter;
+import it.phibonachos.ponos.converters.ConverterException;
 import it.phibonachos.utils.FunctionalWrapper;
 
 import java.beans.IntrospectionException;
@@ -72,6 +73,8 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
                 return throwingFunction.accept(i);
             } catch (NullPointerException npe) {
                 return fallback.apply(i);
+            } catch (ConverterException ce) {
+                throw ce;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
