@@ -13,7 +13,14 @@ public abstract class MultiValueConverter<T> implements Converter<T> {
      */
     @Override
     public T evaluate(Object... props) throws Exception {
-        return convertAll(props);
+        if(props.length != arity())
+            throw new IllegalArgumentException(String.format("arity not respected: %s required over %s passed (%s)", arity(), props.length, this.getClass().getCanonicalName()));
+
+        try {
+            return convertAll(props);
+        } catch (Exception e) {
+            throw new ConverterException(this.message());
+        }
     }
 
     /**
