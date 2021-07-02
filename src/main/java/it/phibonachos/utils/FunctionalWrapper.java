@@ -1,5 +1,7 @@
 package it.phibonachos.utils;
 
+import it.phibonachos.ponos.converters.ConverterException;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -7,17 +9,19 @@ import java.util.function.Supplier;
 public interface FunctionalWrapper <I, R, E extends Exception> {
     R accept(I s) throws E;
 
-    public static <I,R> Function<I, R> tryCatch(FunctionalWrapper<I, R, Exception> throwingFunction) throws RuntimeException {
+    static <I,R> Function<I, R> tryCatch(FunctionalWrapper<I, R, Exception> throwingFunction) throws Exception {
         return i -> {
             try {
                 return throwingFunction.accept(i);
-            }catch (Exception e) {
+            } catch (ConverterException ce) {
+                throw ce;
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         };
     }
 
-    public static <I,R> Function<I, R> tryCatch(FunctionalWrapper<I, R, Exception> throwingFunction, Function<I,R> fallback) {
+    static <I,R> Function<I, R> tryCatch(FunctionalWrapper<I, R, Exception> throwingFunction, Function<I,R> fallback) {
         return i -> {
             try {
                 return throwingFunction.accept(i);
@@ -27,7 +31,7 @@ public interface FunctionalWrapper <I, R, E extends Exception> {
         };
     }
 
-    public static <I,R> Function<I, R> tryCatch(FunctionalWrapper<I, R, Exception> throwingFunction, Supplier<R> fallback) {
+    static <I,R> Function<I, R> tryCatch(FunctionalWrapper<I, R, Exception> throwingFunction, Supplier<R> fallback) {
         return i -> {
             try {
                 return throwingFunction.accept(i);

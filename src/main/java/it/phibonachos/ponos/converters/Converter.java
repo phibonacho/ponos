@@ -8,4 +8,11 @@ public interface Converter<ControlType> {
     }
 
     ControlType evaluate(Object... props) throws Exception;
+
+    /**
+     * <p>Defines converter arity, how many arguments are needed to have a meaningful conversion.</p>
+     *
+     * @return arity of given converter
+     */
+    int arity();
 }
