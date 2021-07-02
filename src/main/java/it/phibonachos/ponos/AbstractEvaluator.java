@@ -1,7 +1,6 @@
 package it.phibonachos.ponos;
 
 import it.phibonachos.ponos.converters.Converter;
-import it.phibonachos.ponos.converters.SingleValueConverter;
 import it.phibonachos.utils.FunctionalWrapper;
 
 import java.lang.annotation.Annotation;
@@ -90,7 +89,7 @@ public abstract class AbstractEvaluator<Target, Control, A extends Annotation, E
      * @param fallback         invoked when throwingFunction results null
      * @param <R>              parametric return type
      * @return result of the invocation in throwingFunction or value provided from fallback function
-     * @throws E on evaluation failure
+     * @throws ! AE on evaluation failure
      */
     protected <R> Function<Method, R> invokeOnNull(FunctionalWrapper<Method, R, Exception> throwingFunction, Function<Method, R> fallback) {
         return i -> {
